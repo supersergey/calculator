@@ -1,0 +1,155 @@
+package calculator;
+
+import com.sun.xml.internal.ws.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Stack;
+
+/**
+ * Created by sergey on 13.05.2016.
+ */
+public class Calculator {
+
+    private boolean validateString(String source) throws IllegalArgumentException
+    {
+        if (null == source || source.isEmpty())
+            throw new IllegalArgumentException("Cannot process an empty string");
+        source = source.replaceAll("[\\sA-Za-zА-Яа-я]*", ""); // remove all spaces out of the string
+        // todo add regexp to check if the string is an arithmetic expression
+
+        if (source.isEmpty())
+            throw new IllegalArgumentException("Cannot process an empty string");
+
+        // check if the amount of ( matches the amount of )
+        if (
+                (source.length() - source.replace("(", "").length())
+                !=
+                (source.length() - source.replace(")", "").length())
+                )
+            throw new IllegalArgumentException("Invalid string");
+
+        if (!source.matches(".*\\d[\\+\\-\\*\\/]+.*[\\d\\)]+$"))
+            throw new IllegalArgumentException("Cannot process an empty string");
+
+        return true;
+    }
+
+    // transforms the incoming String into the Reverse Polish Notation
+    private ArrayList<String> transformToRPN(String source) throws IllegalArgumentException {
+
+        validateString(source);
+
+        Stack<String> stack = new Stack<>();
+
+        ArrayList<String> tokens = getTokens(source);
+
+        ArrayList<String> result = new ArrayList<>();
+        String temp = "";
+
+        // RPN alrorythm as described here: http://trubetskoy1.narod.ru/ppn.html
+
+        for (String s : tokens) {
+            if (s.matches("\\-?\\d+(\\.\\d)?"))
+                result.add(s);
+            else
+                switch (s) {
+                    case "(":
+                        stack.push(s);
+                        break;
+                    case ")":
+                        do {
+                            if (!stack.isEmpty()) {
+                                temp = stack.pop();
+                                if (!temp.equals("("))
+                                    result.add(temp);
+                            }
+                        }
+                        while (!temp.equals("("));
+                        break;
+                    default:
+                        if (!stack.isEmpty() &&
+                                (stack.peek().equals("*") || stack.peek().equals("/")))
+                        {
+                            do {
+                                result.add(stack.pop());
+                            }
+                            while (!stack.isEmpty() &&
+                                    (stack.peek().equals("*") || stack.peek().equals("/")));
+                            stack.push(s);
+                        }
+                        else if (stack.isEmpty() || stack.peek().equals("+") || stack.peek().equals("-") || stack.peek().equals("("))
+                            stack.push(s);
+                }
+        }
+        while (!stack.isEmpty())
+            result.add(stack.pop());
+        return result;
+    }
+
+    public double calculate(String source) throws IllegalArgumentException {
+        ArrayList<String> expression = transformToRPN(source);
+
+        Stack<Double> stack = new Stack<>();
+
+        for (String s : expression) {
+            if (s.matches("\\-?\\d+(\\.\\d)?"))
+                stack.add(Double.parseDouble(s));
+            else {
+                Double d1 = stack.pop();
+                Double d2 = stack.pop();
+                switch (s) {
+                    case "-":
+                        stack.push(d2 - d1);
+                        break;
+                    case "+":
+                        stack.push(d1 + d2);
+                        break;
+                    case "/":
+                        if (d1 == 0.0)
+                            throw new IllegalArgumentException("Division by zero");
+                        else
+                            stack.push(d2 / d1);
+                        break;
+                    case "*":
+                        stack.push(d1 * d2);
+                        break;
+                }
+            }
+        }
+        return stack.pop();
+    }
+
+    private ArrayList<String> getTokens(String source) {
+        ArrayList<String> result = new ArrayList<>();
+        char[] buf = source.toCharArray();
+        String temp = "";
+        for (int i = 0; i < buf.length; i++) {
+
+            if (buf[i] == '-' &&
+                    (i == 0 || buf[i - 1] == '(' || buf[i - 1] == '-')) // this is a negative number
+                temp = temp + String.valueOf(buf[i]);
+            else {
+                if (    // trying to correct the wrong string, e.g. 2+*2 should become 2*2
+                        (i > 0) &&
+                                (buf[i] == '+' || buf[i] == '*' || buf[i] == '/' || buf[i] == '-') &&
+                                (buf[i - 1] == '+' || buf[i - 1] == '-' || buf[i - 1] == '*' || buf[i - 1] == '/')) {
+                    result.remove(result.size() - 1);
+                    result.add(String.valueOf(buf[i]));
+                } else // we have reached an arithmetic operator, need to save the number
+                    if (buf[i] == '(' || buf[i] == ')' || buf[i] == '+' || buf[i] == '*' || buf[i] == '/' || buf[i] == '-') {
+                        if (!temp.isEmpty()) {
+                            result.add(temp);
+                            temp = "";
+                        }
+                        result.add(String.valueOf(buf[i]));
+                    } else
+                        // this should be a number
+                        temp = temp + String.valueOf(buf[i]);
+            }
+        }
+        if (!temp.isEmpty())
+            result.add(temp);
+        return result;
+
+    }
+}
