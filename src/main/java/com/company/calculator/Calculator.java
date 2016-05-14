@@ -1,4 +1,4 @@
-package calculator;
+package com.company.calculator;
 
 import com.sun.xml.internal.ws.util.StringUtils;
 
@@ -20,7 +20,7 @@ public class Calculator {
         if (source.isEmpty())
             throw new IllegalArgumentException("Cannot process an empty string");
 
-        // check if the amount of ( matches the amount of )
+        // check if the amount of '(' matches the amount of ')'
         if (
                 (source.length() - source.replace("(", "").length())
                 !=
@@ -29,7 +29,10 @@ public class Calculator {
             throw new IllegalArgumentException("Invalid string");
 
         if (!source.matches(".*\\d[\\+\\-\\*\\/]+.*[\\d\\)]+$"))
-            throw new IllegalArgumentException("Cannot process an empty string");
+            throw new IllegalArgumentException("Invalid string");
+
+        if (source.matches("^[\\-\\+\\*\\/]+[\\D\\d]*\\(.*$"))
+            throw new IllegalArgumentException("Invalid string");
 
         return true;
     }

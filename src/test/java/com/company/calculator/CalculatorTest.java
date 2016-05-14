@@ -1,4 +1,4 @@
-package calculator;
+package com.company.calculator;
 
 import com.sun.javaws.exceptions.InvalidArgumentException;
 import org.junit.Test;
@@ -32,18 +32,36 @@ public class CalculatorTest {
         calculator.calculate("((0+0)");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testCalculate_InvalidString1() throws Exception {
-        calculator.calculate("()");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCalculate_InvalidString2() throws Exception {
-        calculator.calculate("2/");
-    }
-    @Test(expected = IllegalArgumentException.class)
-    public void testCalculate_InvalidString3() throws Exception {
-        calculator.calculate("2+2+2+2+");
+    @Test
+    public void testCalculate_InvalidString() throws Exception {
+        try {
+            calculator.calculate("()");
+        } catch (IllegalArgumentException ex) {
+        }
+        try {
+            calculator.calculate("2/");
+        } catch (IllegalArgumentException ex) {
+        }
+        try {
+            calculator.calculate("2+2+2+2+");
+        } catch (IllegalArgumentException ex) {
+        }
+        try {
+            calculator.calculate("-(2+2)");
+        } catch (IllegalArgumentException ex) {
+        }
+        try {
+            calculator.calculate("+(2+2)");
+        } catch (IllegalArgumentException ex) {
+        }
+        try {
+            calculator.calculate("*(2+2)");
+        } catch (IllegalArgumentException ex) {
+        }
+        try {
+            calculator.calculate("*+2as(2+2)");
+        } catch (IllegalArgumentException ex) {
+        }
     }
 
     @Test
