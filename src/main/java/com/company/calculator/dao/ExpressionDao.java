@@ -12,5 +12,6 @@ public interface ExpressionDao {
 
     List<Expression> getAllExpressions(User user);
     void addExpression(User user, Expression expression);
+    void clearExpressions(User user);
 
 }

@@ -2,11 +2,14 @@ package com.company.calculator.service;
 
 import com.company.calculator.dao.ExpressionDao;
 import com.company.calculator.dao.UserDao;
+import com.company.calculator.model.Expression;
 import com.company.calculator.model.LoginResult;
 import com.company.calculator.model.User;
 import com.company.calculator.util.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by sergey on 14.05.2016.
@@ -40,5 +43,19 @@ public class MainService {
         }
 
         return result;
+    }
+
+    public List<Expression> getExpressions(User user)
+    {
+        return expressionDao.getAllExpressions(user);
+    }
+
+    public void addExpressions(User user, Expression expression)
+    {
+        expressionDao.addExpression(user, expression);
+    }
+
+    public void clearHistory(User user) {
+        expressionDao.clearExpressions(user);
     }
 }

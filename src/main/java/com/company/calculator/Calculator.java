@@ -1,7 +1,5 @@
 package com.company.calculator;
 
-import com.sun.xml.internal.ws.util.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -10,15 +8,17 @@ import java.util.Stack;
  */
 public class Calculator {
 
-    private boolean validateString(String source) throws IllegalArgumentException
+    private static final String INVALID_STRING = "Cannot calculate an invalid expression.";
+
+    public boolean validateExpression(String source) throws IllegalArgumentException
     {
         if (null == source || source.isEmpty())
-            throw new IllegalArgumentException("Cannot process an empty string");
+            throw new IllegalArgumentException(INVALID_STRING);
         source = source.replaceAll("[\\sA-Za-zА-Яа-я]*", ""); // remove all spaces out of the string
         // todo add regexp to check if the string is an arithmetic expression
 
         if (source.isEmpty())
-            throw new IllegalArgumentException("Cannot process an empty string");
+            throw new IllegalArgumentException(INVALID_STRING);
 
         // check if the amount of '(' matches the amount of ')'
         if (
@@ -26,13 +26,13 @@ public class Calculator {
                 !=
                 (source.length() - source.replace(")", "").length())
                 )
-            throw new IllegalArgumentException("Invalid string");
+            throw new IllegalArgumentException(INVALID_STRING);
 
         if (!source.matches(".*\\d[\\+\\-\\*\\/]+.*[\\d\\)]+$"))
-            throw new IllegalArgumentException("Invalid string");
+            throw new IllegalArgumentException(INVALID_STRING);
 
         if (source.matches("^[\\-\\+\\*\\/]+[\\D\\d]*\\(.*$"))
-            throw new IllegalArgumentException("Invalid string");
+            throw new IllegalArgumentException(INVALID_STRING);
 
         return true;
     }
@@ -40,9 +40,11 @@ public class Calculator {
     // transforms the incoming String into the Reverse Polish Notation
     private ArrayList<String> transformToRPN(String source) throws IllegalArgumentException {
 
-        validateString(source);
+        validateExpression(source);
 
         Stack<String> stack = new Stack<>();
+
+        source = source.replaceAll(",", "."); // change floating comma to flotating point
 
         ArrayList<String> tokens = getTokens(source);
 
