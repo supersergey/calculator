@@ -76,4 +76,26 @@ public class Expression {
     public void setResult(String result) {
         this.result = result;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Expression that = (Expression) o;
+
+        if (!username.equals(that.username)) return false;
+        if (!expression.equals(that.expression)) return false;
+        if (!result.equals(that.result)) return false;
+        return pubDate.equals(that.pubDate);
+    }
+
+    @Override
+    public int hashCode() {
+        int result1 = username.hashCode();
+        result1 = 31 * result1 + expression.hashCode();
+        result1 = 31 * result1 + result.hashCode();
+        result1 = 31 * result1 + pubDate.hashCode();
+        return result1;
+    }
 }

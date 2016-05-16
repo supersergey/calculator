@@ -24,16 +24,16 @@ public class MainService {
     private ExpressionDao expressionDao;
 
     public User getUserbyUsername(String username) {
-        return userDao.getUserbyUsername(username);
+        return userDao.getUserByUsername(username);
     }
 
     public void registerUser(User user) {
-        userDao.registerUser(user);
+        userDao.addUser(user);
     }
 
     public LoginResult checkUser(User user) {
         LoginResult result = new LoginResult();
-        User userFound = userDao.getUserbyUsername(user.getUsername());
+        User userFound = userDao.getUserByUsername(user.getUsername());
         if(userFound == null) {
             result.setError("Invalid username");
         } else if(!PasswordUtil.verifyPassword(user.getPassword(), userFound.getPassword())) {
