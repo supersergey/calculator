@@ -39,7 +39,7 @@ public class WebConfig {
     private final Calculator calculator = new Calculator();
 
     // this flag is set to true after the calculation is done the first time
-    // it is checked on the UI side to display the result nicely
+    // UI verifies this flag to display the result nicely
     private Map<String, Boolean> calculated = new HashMap<>();
 
     public WebConfig(MainService service) {
