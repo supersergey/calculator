@@ -18,7 +18,7 @@
     </#if>
 
     <form action="/getExpressions" method="post">
-        <input type="text" class="form-control" placeholder="Enter expression" name="expression">
+        <input type="text" class="form-control" placeholder="Enter expression" name="expression" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-top:20px; margin-bottom:20px;">
             Calculate
         </button>

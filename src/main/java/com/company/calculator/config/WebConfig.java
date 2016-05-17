@@ -20,6 +20,7 @@ import spark.Request;
 import spark.template.freemarker.FreeMarkerEngine;
 import spark.utils.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.List;
@@ -252,22 +253,26 @@ public class WebConfig {
                 return null;
             }
 
+            map.put("calculated", false);
+            if (null == expression || null == expression.getExpression() || expression.getExpression().isEmpty())
+                map.put("error", "Cannot calculate an empty expression");
+            else
             try {
-                Double result = calculator.calculate(expression.getExpression());
-                if (result % 1 == 0)
+                BigDecimal result = calculator.calculate(expression.getExpression());
+                BigDecimal remainder = result.remainder(new BigDecimal(1));
+                if (remainder.doubleValue() == 0 && result.toString().contains("."))
                     expression.setResult(result.toString().substring(0, result.toString().lastIndexOf('.')));
                 else
                     expression.setResult(result.toString());
+                service.addExpressions(user, expression);
+                calculated.put(user.getUsername(), true);
+                map.put("calculated", true);
             } catch (IllegalArgumentException | EmptyStackException ex) {
                 expression.setResult("Invalid expression");
                 map.put("error", expression.getResult());
             }
-
-            service.addExpressions(user, expression);
-            calculated.put(user.getUsername(), true);
-            map.put("calculated", true);
-            map.put("username", user.getUsername());
             map.put("expressions", service.getExpressions(user));
+            map.put("username", user.getUsername());
             return new ModelAndView(map, "getExpressions.ftl");
         }, new FreeMarkerEngine());
 

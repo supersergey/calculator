@@ -2,6 +2,8 @@ package com.company.calculator;
 
 import org.junit.Test;
 
+import java.math.BigDecimal;
+
 import static org.junit.Assert.*;
 
 /**
@@ -65,31 +67,33 @@ public class CalculatorTest {
 
     @Test
     public void testCalculate() throws Exception {
-        double d;
+        BigDecimal d;
         d = calculator.calculate("2+2");
-        assertEquals(4, d, 0.05);
+        assertEquals(4, d.doubleValue(), 0.05);
         d = calculator.calculate("-2+2");
-        assertEquals(0, d, 0.05);
+        assertEquals(0, d.doubleValue(), 0.05);
         d = calculator.calculate("(2+2)*4+6/(2-1)");
-        assertEquals(22, d, 0.05);
+        assertEquals(22, d.doubleValue(), 0.05);
         d = calculator.calculate("(-2+2)*4+6/(0-1)");
-        assertEquals(-6, d, 0.05);
+        assertEquals(-6, d.doubleValue(), 0.05);
         d = calculator.calculate("(-2+-2)*4+6/(0-1)");
-        assertEquals(-22, d, 0.05);
+        assertEquals(-22, d.doubleValue(), 0.05);
         d = calculator.calculate("(-2+2)*4+6/(0-1)");
-        assertEquals(-6, d, 0.05);
+        assertEquals(-6, d.doubleValue(), 0.05);
         d = calculator.calculate("(-10/-5)");
-        assertEquals(-15, d, 0.05);
+        assertEquals(-15, d.doubleValue(), 0.05);
         d = calculator.calculate("(-10/(-5))");
-        assertEquals(2, d, 0.05);
+        assertEquals(2, d.doubleValue(), 0.05);
         d = calculator.calculate("(-10/(-5))*0");
-        assertEquals(0, d, 0.05);
+        assertEquals(0, d.doubleValue(), 0.05);
         d = calculator.calculate("(-2+2)*4+-6/(0-1)");
-        assertEquals(6, d, 0.05);
+        assertEquals(6, d.doubleValue(), 0.05);
         d = calculator.calculate("((-2+2)*4+-6/(0-1))/20");
-        assertEquals(0.3, d, 0.05);
+        assertEquals(0.3, d.doubleValue(), 0.05);
         d = calculator.calculate("1+1+1+1+1+1+1+1+1+1+1+1+1+1+1++1+1+1+1+1+1+1++1+1+1+1+1++1+1+1+1+1+1+1");
-        assertEquals(34, d, 0.05);
+        assertEquals(34, d.doubleValue(), 0.05);
+        d = calculator.calculate("20/0,00011");
+        assertEquals(181818.18181818, d.doubleValue(), 0.05);
     }
 
 }

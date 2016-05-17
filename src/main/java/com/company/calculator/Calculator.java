@@ -1,5 +1,6 @@
 package com.company.calculator;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -40,11 +41,12 @@ public class Calculator {
     // transforms the incoming String into the Reverse Polish Notation
     private ArrayList<String> transformToRPN(String source) throws IllegalArgumentException {
 
+        if (null != source)
+            source = source.replaceAll(",", "."); // change floating comma to flotating point
+
         validateExpression(source);
 
         Stack<String> stack = new Stack<>();
-
-        source = source.replaceAll(",", "."); // change floating comma to flotating point
 
         ArrayList<String> tokens = getTokens(source);
 
@@ -54,7 +56,7 @@ public class Calculator {
         // RPN alrorythm as described here: http://trubetskoy1.narod.ru/ppn.html
 
         for (String s : tokens) {
-            if (s.matches("\\-?\\d+(\\.\\d)?"))
+            if (s.matches("\\-?\\d+(\\.\\d+)?"))
                 result.add(s);
             else
                 switch (s) {
@@ -91,32 +93,32 @@ public class Calculator {
         return result;
     }
 
-    public double calculate(String source) throws IllegalArgumentException {
+    public BigDecimal calculate(String source) throws IllegalArgumentException {
         ArrayList<String> expression = transformToRPN(source);
 
-        Stack<Double> stack = new Stack<>();
+        Stack<BigDecimal> stack = new Stack<>();
 
         for (String s : expression) {
-            if (s.matches("\\-?\\d+(\\.\\d)?"))
-                stack.add(Double.parseDouble(s));
+            if (s.matches("\\-?\\d+(\\.\\d+)?"))
+                stack.add(new BigDecimal(s));
             else {
-                Double d1 = stack.pop();
-                Double d2 = stack.pop();
+                BigDecimal d1 = stack.pop();
+                BigDecimal d2 = stack.pop();
                 switch (s) {
                     case "-":
-                        stack.push(d2 - d1);
+                        stack.push(d2.subtract(d1));
                         break;
                     case "+":
-                        stack.push(d1 + d2);
+                        stack.push(d1.add(d2));
                         break;
                     case "/":
-                        if (d1 == 0.0)
+                        if (d1.compareTo(new BigDecimal(0)) == 0)
                             throw new IllegalArgumentException("Division by zero");
                         else
-                            stack.push(d2 / d1);
+                            stack.push(d2.divide(d1, 7, BigDecimal.ROUND_HALF_UP));
                         break;
                     case "*":
-                        stack.push(d1 * d2);
+                        stack.push(d1.multiply(d2));
                         break;
                 }
             }
