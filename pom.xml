@@ -48,7 +48,6 @@
                 </executions>
                 <configuration>
                     <mainClass>com.company.calculator.App</mainClass>
-                    <arguments></arguments>
                 </configuration>
             </plugin>
         </plugins>

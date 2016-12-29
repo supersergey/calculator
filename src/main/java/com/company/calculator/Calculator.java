@@ -32,7 +32,7 @@ public class Calculator {
         if (!source.matches(".*\\d[\\+\\-\\*\\/]+.*[\\d\\)]+$"))
             throw new IllegalArgumentException(INVALID_STRING);
 
-        if (source.matches("^[\\-\\+\\*\\/]+[\\D\\d]*\\(.*$"))
+        if (source.matches("^[\\+\\*\\/]+[\\D\\d]*\\(.*$"))
             throw new IllegalArgumentException(INVALID_STRING);
 
         return true;
